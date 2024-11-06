@@ -1,8 +1,10 @@
 from py.Global import *
 
+import customtkinter as ctk
+
 class App(ctk.CTk):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self):
+        self.button = None
         self.test()
 
     def test(self):
@@ -11,7 +13,7 @@ class App(ctk.CTk):
         self.minsize(400, 200)
         self.resizable(False, False)
 
-        self.button = ctk.CTkButton(self, text="test", command=self.Testing())
+        self.button = ctk.CTkButton(self, text="test", command=self.Testing)
         self.button.pack()
 
         self.mainloop()
