@@ -22,11 +22,15 @@ paths = {
         "settings.ini"
     },
     "docs": {
-        "DOCS.md"
+        "DOCS.md",
+        "HELP.md"
     },
     "tests": {
         "__init__.py",
         "Test.py"
+    },
+    "downloads": {
+        "downloads.txt"
     }
 }
 

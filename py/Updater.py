@@ -2,6 +2,8 @@
 ### * Standard Python Imports:
 import logging
 import os
+import shutil
+from ast import copy_location
 
 ### * Third-Party Imports:
 import customtkinter as ctk
@@ -10,7 +12,7 @@ import requests
 from requests import options
 
 ### * Local Imports:
-from Global import *
+from .Global import *
 
 ONLINE_VERSION_URL = f"{RAW_REPO_URL}/config/version.txt"
 
@@ -21,6 +23,9 @@ class Updater(ctk.CTk):
 
         logging.info("Checking for updates...")
 
+        self.launch()
+
+    def launch(self):
         self.checkVersions()
         self.updateHandler()
 
@@ -43,12 +48,31 @@ class Updater(ctk.CTk):
             logging.info(f"{Fore.YELLOW}An update is available...")
             CHOICE = inputSyntax("Would you like to update?", ["Yes", "No"])
             if CHOICE == "yes".casefold():
-                self.updater()
+                self.updater(outputFile="repository.zip")
             else:
                 logging.info("Update cancelled, have a good day!")
 
-    def updater(self):
-        logging.info(f"{Fore.YELLOW}Updating to version {self.ONLINE_VERSION}...")
-        requests.get(f"{RAW_RELEASE_URL}/{self.ONLINE_VERSION}/{self.ONLINE_VERSION}")
+    def updater(self, outputFile):
+        zipURL= f"{RAW_RELEASE_URL}/{self.LOCAL_VERSION}/{self.LOCAL_VERSION}.zip"
+
+        response = requests.get(zipURL, stream=True)
+        response.raise_for_status()
+
+        if os.path.exists(outputFile):
+            CHOICE = inputSyntax("Would you like to delete all existing downloads?", ["Yes", "No"])
+            if CHOICE == "Yes":
+                os.removedirs("downloads")
+                os.makedirs("downloads")
+            elif CHOICE == "No":
+                logging.info("Downloads will be preserved, have a good day!")
+
+        else:
+            with open(outputFile, 'wb') as zip_file:
+                for chunk in response.iter_content(chunk_size=8192):
+                    zip_file.write(chunk)
+                    logging.info("Downloading...")
+            shutil.move(outputFile, "downloads")
+
+
 
 Updater()
