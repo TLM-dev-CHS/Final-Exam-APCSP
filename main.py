@@ -1,5 +1,3 @@
-from tkinter.filedialog import Directory
-
 from py.Global import *
 
 import customtkinter as ctk
