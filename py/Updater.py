@@ -18,6 +18,8 @@ ONLINE_VERSION_URL = f"{RAW_REPO_URL}/config/version.txt"
 
 class Updater(ctk.CTk):
     def __init__(self):
+        self.UP_TO_DATE = False
+
         self.LOCAL_VERSION = None
         self.ONLINE_VERSION = None
 
@@ -26,6 +28,7 @@ class Updater(ctk.CTk):
         self.launch()
 
     def launch(self):
+        self.UP_TO_DATE = self.checkVersions()
         self.checkVersions()
         self.updateHandler()
 
@@ -42,15 +45,16 @@ class Updater(ctk.CTk):
         LV = int(self.LOCAL_VERSION.replace(".", ""))
         OV = int(self.ONLINE_VERSION.replace(".", ""))
 
-        if LV == OV:
-            logging.info(f"{Fore.GREEN}{APP_NAME} is already up to date, have a good day!")
-        elif LV < OV:
+        if LV < OV:
             logging.info(f"{Fore.YELLOW}An update is available...")
             CHOICE = inputSyntax("Would you like to update?", ["Yes", "No"])
             if CHOICE == "yes".casefold():
                 self.updater(outputFile="repository.zip")
             else:
                 logging.info("Update cancelled, have a good day!")
+
+        elif LV > CV:
+            logging.error(f"{Fore.RED}Something is not right, please contact the developer for assistance.")
 
     def updater(self, outputFile):
         zipURL= f"{RAW_RELEASE_URL}/{self.LOCAL_VERSION}/{self.LOCAL_VERSION}.zip"
